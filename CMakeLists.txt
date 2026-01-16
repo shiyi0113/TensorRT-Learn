@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.18)
+
 project(TensorRT_Learn LANGUAGES CXX CUDA)
 
 # === 配置 C++ 和 CUDA 标准 ===
@@ -8,9 +9,7 @@ set(CMAKE_CUDA_STANDARD 17)
 set(CMAKE_CUDA_STANDARD_REQUIRED ON)
 
 # === 配置 GPU 架构 ===
-# 对应 Makefile.inc 中的 sm_89 (Ada Lovelace, e.g., RTX 4090)
-# 如果你的显卡不同，请修改此处 (例如 A100/3090 用 80, T4 用 75)
-set(CMAKE_CUDA_ARCHITECTURES 89)
+set(CMAKE_CUDA_ARCHITECTURES 120)
 
 # === 查找依赖库 ===
 find_package(CUDAToolkit REQUIRED)
@@ -18,7 +17,6 @@ find_package(ZLIB REQUIRED)
 find_package(Threads REQUIRED)
 
 # === 自动查找 TensorRT ===
-# 不再硬编码 /usr/local/tensorrt，而是尝试在常见路径搜索
 set(TENSORRT_ROOT "" CACHE PATH "Path to TensorRT installation")
 
 find_path(TENSORRT_INCLUDE_DIR NvInfer.h
@@ -55,7 +53,7 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 
 # === 定义源文件 ===
 set(SOURCES
-    src/main.cpp
+    src/01-SimpleDemo/main.cpp
     include/cookbookHelper.cu
     include/calibrator.cpp
     include/cnpy.cpp
@@ -72,7 +70,7 @@ target_compile_options(main PRIVATE
 # === 链接库 ===
 target_link_libraries(main PRIVATE
     CUDA::cudart
-    ${TENSORRT_LIB}   # 直接链接找到的库文件
+    ${TENSORRT_LIB} 
     ZLIB::ZLIB
     ${CMAKE_DL_LIBS}
 )
